@@ -135,6 +135,30 @@
             if (callback !== undefined && typeof callback === 'function') {
                 callback(ret);
             }
+        },
+        /**
+         * @desc 防抖执行
+         * @param {function} func 调用函数
+         * @param {int} wait 间隔ms
+         */
+        debounce: function(func, wait, immediate) {
+            var timeout;
+            return function() {
+                var context = this,
+                    args = arguments;
+
+                var later = function() {
+                    timeout = null;
+                    if (!immediate) func.apply(context, args);
+                };
+
+                var callNow = immediate && !timeout;
+
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+
+                if (callNow) func.apply(context, args);
+            };
         }
     };
 
@@ -232,5 +256,132 @@
 
             bindEvent();
         }();
+    };
+
+    /**
+     * @desc confirm pop
+     * @param {string} str - display string
+     * @param {function} callback - 回调函数，参数为返回值
+     * @param {object} options - 定制参数
+     */
+    $.fn.confirm = function(str, callback, options) {
+        var $this, settings,
+            render, getDom, resizeEvent, close, bindEvent;
+
+        $this = $(this);
+        settings = $.extend({
+            content: str
+        }, options);
+
+        resizeEvent = function($dom) {
+            $(window).on('resize', App.Util.debounce(function() {
+                if ($dom.filter(':visible').length > 0) {
+                    showTip();
+                }
+            }, 100));
+        };
+
+        getDom = function() {
+            var $dom;
+
+            $dom = $('#v_pop_ftip');
+
+            if ($dom.length <= 0) {
+                $dom = $([
+                    '<div id="v_pop_ftip" class="v_pop_ftip">',
+                        '<p class="v_pop_ftip_content"></p>',
+                        '<a href="javascript:;" class="v_pop_min_btn v_pop_min_okbtn">确定</a>',
+                        '<a href="javascript:;" class="v_pop_min_btn v_pop_min_cancelbtn">取消</a>',
+                    '</div>'
+                ].join(''));
+
+                resizeEvent($dom);
+            }
+            $dom.find('.v_pop_ftip_content').html(str);
+            $dom.removeClass('v_pop_ftip_minwidth')
+                .removeClass('v_pop_ftip_maxwidth')
+                .css('opacity', 0);
+            $dom.show();
+
+            return $dom;
+        };
+
+        bindEvent = function() {
+            var $v_pop_ftip, $v_pop_close, $v_pop_okbtn;
+
+            $v_pop_ftip = $('#v_pop_ftip');
+            $v_pop_okbtn = $v_pop_ftip.find('.v_pop_min_okbtn').eq(0);
+            $v_pop_cancelbtn = $v_pop_ftip.find('.v_pop_min_cancelbtn').eq(0);
+
+            $v_pop_okbtn.off('click').on('click', function() {
+                close(true, callback);
+            });
+            $v_pop_cancelbtn.off('click').on('click', function() {
+                close(false, callback);
+            });
+        };
+
+        /**
+         * @desc 关闭弹框
+         * @param {book} ret 返回值
+         * @param {function} callback 回调函数
+         */
+        close = function(ret, callback) {
+            $('#v_pop_ftip').hide();
+
+            if (callback !== undefined && typeof callback === 'function') {
+                callback(ret);
+            }
+        };
+
+        showTip = function() {
+            var $dom, thisOffset, domWidth;
+
+            $dom = $('#v_pop_ftip');
+            thisOffset = $this.offset();
+            domWidth = $dom.width();
+
+            if (domWidth < 120) {
+                $dom.addClass('v_pop_ftip_minwidth');
+            }
+
+            if (domWidth > 240) {
+                $dom.addClass('v_pop_ftip_maxwidth');
+            }
+
+            $dom.css({
+                top: thisOffset.top - (
+                    $dom.height() + 
+                    parseInt($dom.css('padding-bottom'), 10) + 
+                    parseInt($dom.css('padding-top'), 10) + 
+                    parseInt($dom.css('border-bottom-width'), 10) + 
+                    parseInt($dom.css('border-top-width'), 10)
+                ),
+                left: thisOffset.left + (
+                    parseInt($this.css('padding-left'), 10) + 
+                    $this.width() / 2 + 
+                    parseInt($this.css('border-top-width'), 10)
+                    ) - (
+                    $dom.width() / 2 + 
+                    parseInt($dom.css('padding-left'), 10) + 
+                    parseInt($dom.css('border-top-width'), 10)
+                ),
+                opacity: 1
+            });
+        };
+
+        render = function() {
+            var $dom;
+
+            $dom = getDom();
+            $('body').append($dom);
+
+            showTip();
+            bindEvent();
+        };
+
+        return this.each(function() {
+            render();
+        });
     };
 }(jQuery));
