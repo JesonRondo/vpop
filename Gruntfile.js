@@ -9,7 +9,7 @@ module.exports = function(grunt) {
             },
             my_target: {
                 files: {
-                    'js/jquery.vpop.js': ['js/jquery.vpop.min.js']
+                    'js/jquery.vpop.min.js': ['js/jquery.vpop.js']
                 }
             }
         },
@@ -21,7 +21,7 @@ module.exports = function(grunt) {
                     '<%= grunt.template.today("yyyy-mm-dd") %> */\r'
                 },
                 files: {
-                    'css/jquery.vpop.css': ['css/jquery.vpop.min.css']
+                    'css/jquery.vpop.min.css': ['css/jquery.vpop.css']
                 }
             }
         }

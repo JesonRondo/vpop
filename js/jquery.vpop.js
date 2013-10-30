@@ -4,6 +4,7 @@
  *           - include functions:
  *               $.alert();
  *               $.confirm();
+ *               $.fn.confirm();
  * @author   longzhou (buji)
  * @blog     http://vicbeta.com
  * @email    pancnlz@gmail.com
@@ -21,18 +22,14 @@
         /**
          * @desc Mask覆盖层
          */
-        appendMask: function() {
-            var $mask;
-            $mask = [
-                '<div class="v_pop_mask" id="v_pop_mask"></div>'
-            ].join('');
+        mask: function() {
+            var $mask = $('#vp_mk');
 
-            $mask = $($mask);
-            $mask.css({
-                'opacity': .3
-            });
-
-            if ($('#v_pop_mask').length <= 0) {
+            if ($mask.length <= 0) {
+                $mask = $('<div>', {'class': 'vp_mk', 'id': 'vp_mk'});
+                $mask.css({
+                    'opacity': .3
+                });
                 $('body').append($mask);
             }
         },
@@ -42,81 +39,80 @@
          * @params {object} params 弹框参数
          */
         show: function(type, params) {
-            var $pop_wrap, $box, getDom;
+            var $vp_wrap, $box, getDom, t;
 
-            $pop_wrap = $('#v_pop_wrap');
+            $vp_wrap = $('#vp_wrap');
 
-            if ($pop_wrap.length <= 0) {
-                $pop_wrap = $([
-                    '<div class="v_pop_wrap" id="v_pop_wrap">',
-                        '<h5 class="v_pop_tit"></h5>',
-                        '<a href="javascript:;" class="v_pop_close">×</a>',
-                        '<div class="v_pop_box"></div>',
-                    '</div>'
-                ].join(''));
+            if ($vp_wrap.length <= 0) {
+                $vp_wrap = $('<div>', {'class': 'vp_wrap', 'id': 'vp_wrap'});
+                $vp_wrap.append($('<h5>', {'class': 'vp_t'}))
+                    .append($('<a>', {'class': 'vp_close', 'href': 'javascript:;'}).html('×'))
+                    .append($('<div>', {'class': 'v_pop_box'}));
 
-                $('body').append($pop_wrap);
+                $('body').append($vp_wrap);
+
+                // mask event
+                $('#vp_mk')
+                    .off('click')
+                    .on('click', function() {
+                        clearTimeout(t);
+                        $vp_wrap.addClass('vp_shake');
+                        t = setTimeout(function() {
+                            $vp_wrap.removeClass('vp_shake');
+                        }, 500);
+                    });
             }
 
-            $pop_wrap.find('.v_pop_tit').eq(0).html(params.title);
+            $vp_wrap.find('.vp_t').eq(0).html(params.title);
 
             getDom = {
                 alert: function() {
-                    $box = $('.v_alert_box').eq(0);
+                    $box = $('.vp_alert').eq(0);
 
                     if ($box.length <= 0) {
-                        $box = $([
-                            '<div class="v_alert_box v_pop_innerbox">',
-                                '<p class="v_pop_content"></p>',
-                                '<a href="javascript:;" class="v_pop_btn v_pop_okbtn">确定</a>',
-                            '</div>'
-                        ].join(''));
+                        $box = $('<div>', {'class': 'vp_alert vp_inner'});
+                        $box.append($('<p>', {'class': 'vp_cnt'}))
+                            .append($('<a>', {'class': 'vp_btn vp_ok', 'href': 'javascript:;'}).html('确定'));
                     }
 
-                    $box.find('.v_pop_content').eq(0).html(params.content);
+                    $box.find('.vp_cnt').eq(0).html(params.content);
                     $box.show();
 
                     return $box;
                 },
                 confirm: function() {
-                    $box = $('.v_confirm_box').eq(0);
+                    $box = $('.vp_confirm').eq(0);
                     if ($box.length <= 0) {
-                        $box = $([
-                            '<div class="v_confirm_box v_pop_innerbox">',
-                                '<p class="v_pop_content"></p>',
-                                '<a href="javascript:;" class="v_pop_btn v_pop_okbtn">确定</a>',
-                                '<a href="javascript:;" class="v_pop_btn v_pop_cancelbtn">取消</a>',
-                            '</div>'
-                        ].join(''));
+                        $box = $('<div>', {'class': 'vp_confirm vp_inner'});
+                        $box.append($('<p>', {'class': 'vp_cnt'}))
+                            .append($('<a>', {'class': 'vp_btn vp_ok', 'href': 'javascript:;'}).html('确定'))
+                            .append($('<a>', {'class': 'vp_btn vp_cancel', 'href': 'javascript:;'}).html('取消'));
                     }
 
-                    $box.find('.v_pop_content').eq(0).html(params.content);
+                    $box.find('.vp_cnt').eq(0).html(params.content);
                     $box.show();
 
                     return $box;
                 }
             };
 
-            $pop_wrap.find('.v_pop_box').eq(0).find('.v_pop_innerbox')
+            $vp_wrap.find('.v_pop_box').eq(0).find('.vp_inner')
                 .hide()
                 .end()
                 .append(getDom[type]());
 
-            $pop_wrap.css({
+            $vp_wrap.css({
                 'display': 'block',
                 'opacity': 0
             });
 
-            $pop_wrap.css({
-                'margin-left': -$pop_wrap.width() / 2 - 1,
-                'margin-top': -$pop_wrap.height() / 2 - 1
-            });
-
             // show
-            $('#v_pop_mask').show();
-            $pop_wrap.css({
+            $vp_wrap.css({
+                'margin-left': -$vp_wrap.width() / 2 - 1,
+                'margin-top': -$vp_wrap.height() / 2 - 1,
                 'opacity': 1
             });
+            $('#vp_mk').show();
         },
         /**
          * @desc 关闭弹框
@@ -124,13 +120,9 @@
          * @param {function} callback 回调函数
          */
         close: function(ret, callback) {
-            var $pop_wrap;
-
-            $pop_wrap = $('#v_pop_wrap');
-
             // hide
-            $('#v_pop_mask').hide();
-            $pop_wrap.hide();
+            $('#vp_mk').hide();
+            $('#vp_wrap').hide();
 
             if (callback !== undefined && typeof callback === 'function') {
                 callback(ret);
@@ -176,31 +168,15 @@
         }, options);
 
         bindEvent = function() {
-            var $v_pop_wrap, $v_pop_close, $v_pop_okbtn, $mask, t;
-
-            $mask = $('#v_pop_mask');
-            $v_pop_wrap = $('#v_pop_wrap');
-            $v_pop_close = $v_pop_wrap.find('.v_pop_close').eq(0);
-            $v_pop_okbtn = $v_pop_wrap.find('.v_alert_box').eq(0).find('.v_pop_okbtn').eq(0);
-
-            $v_pop_close.off('click').on('click', function() {
-                App.Util.close();
-            });
-            $v_pop_okbtn.off('click').on('click', function() {
-                App.Util.close();
-            });
-            $mask.off('click').on('click', function() {
-                clearTimeout(t);
-                $v_pop_wrap.addClass('v_pop_shake');
-                t = setTimeout(function() {
-                    $v_pop_wrap.removeClass('v_pop_shake');
-                }, 500);
-            });
+            $('#vp_wrap')
+                .off('click')
+                .on('click', '.vp_ok, .vp_close', function() {
+                    App.Util.close();
+                });
         };
 
         render = function() {
-            App.Util.appendMask();
-
+            App.Util.mask();
             App.Util.show('alert', settings);
 
             bindEvent();
@@ -222,36 +198,18 @@
         }, options);
 
         bindEvent = function() {
-            var $v_pop_wrap, $v_pop_close, $v_confirm_box, $v_pop_okbtn, $mask, t;
-
-            $mask = $('#v_pop_mask');
-            $v_pop_wrap = $('#v_pop_wrap');
-            $v_pop_close = $v_pop_wrap.find('.v_pop_close').eq(0);
-            $v_confirm_box = $v_pop_wrap.find('.v_confirm_box').eq(0);
-            $v_pop_okbtn = $v_confirm_box.find('.v_pop_okbtn').eq(0);
-            $v_pop_cancelbtn = $v_confirm_box.find('.v_pop_cancelbtn').eq(0);
-
-            $v_pop_close.off('click').on('click', function() {
-                App.Util.close(false, callback);
-            });
-            $v_pop_okbtn.off('click').on('click', function() {
-                App.Util.close(true, callback);
-            });
-            $v_pop_cancelbtn.off('click').on('click', function() {
-                App.Util.close(false, callback);
-            });
-            $mask.off('click').on('click', function() {
-                clearTimeout(t);
-                $v_pop_wrap.addClass('v_pop_shake');
-                t = setTimeout(function() {
-                    $v_pop_wrap.removeClass('v_pop_shake');
-                }, 500);
-            });
+            $('#vp_wrap')
+                .off('click')
+                .on('click', '.vp_close, .vp_cancel', function() {
+                    App.Util.close(false, callback);
+                })
+                .on('click', '.vp_ok', function() {
+                    App.Util.close(true, callback);
+                });
         };
 
         render = function() {
-            App.Util.appendMask();
-
+            App.Util.mask();
             App.Util.show('confirm', settings);
 
             bindEvent();
@@ -284,22 +242,19 @@
         getDom = function() {
             var $dom;
 
-            $dom = $('#v_pop_ftip');
+            $dom = $('#vp_tip');
 
             if ($dom.length <= 0) {
-                $dom = $([
-                    '<div id="v_pop_ftip" class="v_pop_ftip">',
-                        '<p class="v_pop_ftip_content"></p>',
-                        '<a href="javascript:;" class="v_pop_min_btn v_pop_min_okbtn">确定</a>',
-                        '<a href="javascript:;" class="v_pop_min_btn v_pop_min_cancelbtn">取消</a>',
-                    '</div>'
-                ].join(''));
-
+                $dom = $('<div>', {'class': 'vp_tip', 'id': 'vp_tip'});
+                $dom.append($('<p>', {'class': 'vp_tip_cnt'}))
+                    .append($('<a>', {'class': 'vp_min_btn vp_min_ok', 'href': 'javascript:;'}).html('确定'))
+                    .append($('<a>', {'class': 'vp_min_btn vp_min_cancel', 'href': 'javascript:;'}).html('取消'));
+                
                 resizeEvent($dom);
             }
-            $dom.find('.v_pop_ftip_content').html(str);
-            $dom.removeClass('v_pop_ftip_minwidth')
-                .removeClass('v_pop_ftip_maxwidth')
+            $dom.find('.vp_tip_cnt').html(str);
+            $dom.removeClass('vp_tip_min')
+                .removeClass('vp_tip_max')
                 .css('opacity', 0);
             $dom.show();
 
@@ -307,18 +262,14 @@
         };
 
         bindEvent = function() {
-            var $v_pop_ftip, $v_pop_close, $v_pop_okbtn;
-
-            $v_pop_ftip = $('#v_pop_ftip');
-            $v_pop_okbtn = $v_pop_ftip.find('.v_pop_min_okbtn').eq(0);
-            $v_pop_cancelbtn = $v_pop_ftip.find('.v_pop_min_cancelbtn').eq(0);
-
-            $v_pop_okbtn.off('click').on('click', function() {
-                close(true, callback);
-            });
-            $v_pop_cancelbtn.off('click').on('click', function() {
-                close(false, callback);
-            });
+            $('#vp_tip')
+                .off('click')
+                .on('click', '.vp_min_ok', function() {
+                    close(true, callback);
+                })
+                .on('click', '.vp_min_cancel', function() {
+                    close(false, callback);
+                });
         };
 
         /**
@@ -327,7 +278,7 @@
          * @param {function} callback 回调函数
          */
         close = function(ret, callback) {
-            $('#v_pop_ftip').hide();
+            $('#vp_tip').hide();
 
             if (callback !== undefined && typeof callback === 'function') {
                 callback(ret);
@@ -337,35 +288,21 @@
         showTip = function() {
             var $dom, thisOffset, domWidth;
 
-            $dom = $('#v_pop_ftip');
+            $dom = $('#vp_tip');
             thisOffset = $this.offset();
             domWidth = $dom.width();
 
             if (domWidth < 120) {
-                $dom.addClass('v_pop_ftip_minwidth');
+                $dom.addClass('vp_tip_min');
             }
 
             if (domWidth > 240) {
-                $dom.addClass('v_pop_ftip_maxwidth');
+                $dom.addClass('vp_tip_max');
             }
 
             $dom.css({
-                top: thisOffset.top - (
-                    $dom.height() + 
-                    parseInt($dom.css('padding-bottom'), 10) + 
-                    parseInt($dom.css('padding-top'), 10) + 
-                    parseInt($dom.css('border-bottom-width'), 10) + 
-                    parseInt($dom.css('border-top-width'), 10)
-                ),
-                left: thisOffset.left + (
-                    parseInt($this.css('padding-left'), 10) + 
-                    $this.width() / 2 + 
-                    parseInt($this.css('border-top-width'), 10)
-                    ) - (
-                    $dom.width() / 2 + 
-                    parseInt($dom.css('padding-left'), 10) + 
-                    parseInt($dom.css('border-top-width'), 10)
-                ),
+                top: thisOffset.top - $dom.outerHeight(),
+                left: thisOffset.left - ($this.outerWidth() + $dom.outerWidth()) / 2,
                 opacity: 1
             });
         };

@@ -6,26 +6,43 @@
     <style>
         body {
             margin: 0 auto;
+            color: #333;
+            font: normal 12px/1.5 helvetica, tahoma, arial, sans-serif;
         }
-        #testdom {
-            position: absolute;
-            width: 100px;
-            height: 50px;
-            left: 50%;
-            top: 50%;
-            padding: 20px 10px;
-            line-height: 50px;
-            margin-left: -60px;
-            margin-top: -70px;
+        a {
             color: #fff;
-            text-align: center;
-            background: orange;
+        }
+        .testpanel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            margin-left: -92px;
+            margin-top: -75px;
+            padding: 10px 20px;
+            color: #fff;
+            background: rgba(0, 0, 0, .6);
+        }
+        .testpanel label {
+            display: block;
         }
     </style>
     <link rel="stylesheet" href="css/jquery.vpop.css" />
 </head>
 <body>
-    <div id="testdom"> 测试区域 </div>
+    <div class="testpanel">
+        <label for="alert">1. $.alert();</label>
+        <input type="text" id="alert_val" />
+        <a href="javascript:;" id="alert">来</a>
+
+        <label for="confirm">2. $.confirm();</label>
+        <input type="text" id="confirm_val" />
+        <a href="javascript:;" id="confirm">来</a>
+
+        <label for="fnconfirm">2. $.fn.confirm();</label>
+        <input type="text" id="fnconfirm_val" />
+        <a href="javascript:;" id="fnconfirm">来</a>
+
+    </div>
 
     <iframe src="http://www.mogujie.com/" width="100%" height="5459" frameborder="0"></iframe>
 
@@ -33,12 +50,18 @@
     <script src="js/jquery.vpop.js"></script>
 
     <script>
-    // $.alert('信息不存在，或者客服不在线，或者您运气不好，请骚后换个姿势再试一次！');
-    // $.confirm('信息不存在，或者客服不在线，或者您运气不好，请骚后和快刀君换个姿势再试一次！', function(ret) {
-    //     console.log(ret);
-    // });
-    $('#testdom').confirm('信息不存在，或者客服不在线，超长测试测试测试，超长测试测试测试，超长测试测试测试，超长测试测试测试', function(ret) {
-        console.log(ret);
+    $('#alert').on('click', function() {
+        $.alert($('#alert_val').val());
+    });
+    $('#confirm').on('click', function() {
+        $.confirm($('#confirm_val').val(), function(ret) {
+            console.log(ret);
+        });
+    });
+    $('#fnconfirm').on('click', function() {
+        $(this).confirm($('#fnconfirm_val').val(), function(ret) {
+            console.log(ret);
+        });
     });
     </script>
 </body>
