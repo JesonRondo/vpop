@@ -20,7 +20,10 @@
             margin-top: -75px;
             padding: 10px 20px;
             color: #fff;
+            background: rgb(0, 0, 0);
             background: rgba(0, 0, 0, .6);
+            _position: absolute;
+            _top: expression(document.compatMode && document.compatMode=='CSS1Compat' ? documentElement.scrollTop + documentElement.clientHeight / 2: document.body.scrollTop + document.body.clientHeight / 2);
         }
         .testpanel label {
             display: block;
@@ -44,7 +47,7 @@
 
     </div>
 
-    <iframe src="http://www.mogujie.com/" width="100%" height="5459" frameborder="0"></iframe>
+    <iframe src="http://www.mogujie.com/" width="100%" height="5459" scrolling="no" frameborder="0"></iframe>
 
     <script src="http://libs.baidu.com/jquery/1.10.2/jquery.min.js"></script>
     <script src="js/jquery.vpop.js"></script>

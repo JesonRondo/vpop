@@ -27,7 +27,7 @@
 
             if ($mask.length <= 0) {
                 $mask = $('<div>', {'class': 'vp_mk', 'id': 'vp_mk'}).css({
-                    'opacity': .3
+                    'opacity': .6
                 });
 
                 $('body').append($mask);
@@ -98,10 +98,7 @@
                 }
             };
 
-            $vp_wrap.find('.v_pop_box').find('.vp_inner')
-                .hide()
-                .end()
-                .append(getDom[type]());
+            $vp_wrap.find('.v_pop_box').append(getDom[type]());
 
             // show
             $vp_wrap
@@ -124,6 +121,7 @@
         close: function(ret, callback) {
             // hide
             $('#vp_mk').hide();
+            $('#vp_wrap').find('.vp_inner').hide();
             $('#vp_wrap').hide();
 
             if (callback !== undefined && typeof callback === 'function') {
@@ -229,11 +227,15 @@
         var $this = $(this),
 
             resizeEvent = function($dom) {
-                $(window).on('resize, scroll', App.Util.debounce(function() {
+                var debounceFunc = App.Util.debounce(function() {
                     if ($dom.filter(':visible').length > 0) {
                         showTip();
                     }
-                }, 50));
+                }, 50);
+
+                $(window)
+                    .on('resize', debounceFunc)
+                    .on('scroll', debounceFunc);
             },
 
             getDom = function() {
