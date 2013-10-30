@@ -26,10 +26,10 @@
             var $mask = $('#vp_mk');
 
             if ($mask.length <= 0) {
-                $mask = $('<div>', {'class': 'vp_mk', 'id': 'vp_mk'});
-                $mask.css({
+                $mask = $('<div>', {'class': 'vp_mk', 'id': 'vp_mk'}).css({
                     'opacity': .3
                 });
+
                 $('body').append($mask);
             }
         },
@@ -39,13 +39,12 @@
          * @params {object} params 弹框参数
          */
         show: function(type, params) {
-            var $vp_wrap, $box, getDom, t;
-
-            $vp_wrap = $('#vp_wrap');
+            var $vp_wrap = $('#vp_wrap'),
+                $box, getDom, t;
 
             if ($vp_wrap.length <= 0) {
-                $vp_wrap = $('<div>', {'class': 'vp_wrap', 'id': 'vp_wrap'});
-                $vp_wrap.append($('<h5>', {'class': 'vp_t'}))
+                $vp_wrap = $('<div>', {'class': 'vp_wrap', 'id': 'vp_wrap'})
+                    .append($('<h5>', {'class': 'vp_t'}))
                     .append($('<a>', {'class': 'vp_close', 'href': 'javascript:;'}).html('×'))
                     .append($('<div>', {'class': 'v_pop_box'}));
 
@@ -63,55 +62,58 @@
                     });
             }
 
-            $vp_wrap.find('.vp_t').eq(0).html(params.title);
+            $vp_wrap.find('.vp_t').html(params.title);
 
             getDom = {
                 alert: function() {
-                    $box = $('.vp_alert').eq(0);
+                    $box = $('.vp_alert');
 
                     if ($box.length <= 0) {
-                        $box = $('<div>', {'class': 'vp_alert vp_inner'});
-                        $box.append($('<p>', {'class': 'vp_cnt'}))
+                        $box = $('<div>', {'class': 'vp_alert vp_inner'})
+                            .append($('<p>', {'class': 'vp_cnt'}))
                             .append($('<a>', {'class': 'vp_btn vp_ok', 'href': 'javascript:;'}).html('确定'));
                     }
 
-                    $box.find('.vp_cnt').eq(0).html(params.content);
-                    $box.show();
+                    $box.show()
+                        .find('.vp_cnt')
+                        .html(params.content);
 
                     return $box;
                 },
                 confirm: function() {
-                    $box = $('.vp_confirm').eq(0);
+                    $box = $('.vp_confirm');
+
                     if ($box.length <= 0) {
-                        $box = $('<div>', {'class': 'vp_confirm vp_inner'});
-                        $box.append($('<p>', {'class': 'vp_cnt'}))
+                        $box = $('<div>', {'class': 'vp_confirm vp_inner'})
+                            .append($('<p>', {'class': 'vp_cnt'}))
                             .append($('<a>', {'class': 'vp_btn vp_ok', 'href': 'javascript:;'}).html('确定'))
                             .append($('<a>', {'class': 'vp_btn vp_cancel', 'href': 'javascript:;'}).html('取消'));
                     }
 
-                    $box.find('.vp_cnt').eq(0).html(params.content);
-                    $box.show();
+                    $box.show()
+                        .find('.vp_cnt')
+                        .html(params.content);
 
                     return $box;
                 }
             };
 
-            $vp_wrap.find('.v_pop_box').eq(0).find('.vp_inner')
+            $vp_wrap.find('.v_pop_box').find('.vp_inner')
                 .hide()
                 .end()
                 .append(getDom[type]());
 
-            $vp_wrap.css({
-                'display': 'block',
-                'opacity': 0
-            });
-
             // show
-            $vp_wrap.css({
-                'margin-left': -$vp_wrap.width() / 2 - 1,
-                'margin-top': -$vp_wrap.height() / 2 - 1,
-                'opacity': 1
-            });
+            $vp_wrap
+                .css({
+                    'display': 'block',
+                    'opacity': 0
+                })
+                .css({
+                    'margin-left': -$vp_wrap.width() / 2 - 1,
+                    'margin-top': -$vp_wrap.height() / 2 - 1,
+                    'opacity': 1
+                });
             $('#vp_mk').show();
         },
         /**
@@ -160,27 +162,28 @@
      * @param {object} options - 定制参数
      */
     $.alert = function(str, options) {
-        var render, settings, bindEvent;
+        var render,
 
-        settings = $.extend({
-            title: '提示',
-            content: str
-        }, options);
+            settings = $.extend({
+                title: '提示',
+                content: str
+            }, options),
 
-        bindEvent = function() {
-            $('#vp_wrap')
-                .off('click')
-                .on('click', '.vp_ok, .vp_close', function() {
-                    App.Util.close();
-                });
-        };
+            bindEvent = function() {
+                $('#vp_wrap')
+                    .off('click')
+                    .on('click', '.vp_ok, .vp_close', function() {
+                        App.Util.close();
+                    });
+            };
 
-        render = function() {
+        // render
+        (function() {
             App.Util.mask();
             App.Util.show('alert', settings);
 
             bindEvent();
-        }();
+        }());
     };
 
     /**
@@ -190,132 +193,120 @@
      * @param {object} options - 定制参数
      */
     $.confirm = function(str, callback, options) {
-        var render, settings, bindEvent;
+        var render,
 
-        settings = $.extend({
-            title: '提示',
-            content: str
-        }, options);
+            settings = $.extend({
+                title: '提示',
+                content: str
+            }, options),
 
-        bindEvent = function() {
-            $('#vp_wrap')
-                .off('click')
-                .on('click', '.vp_close, .vp_cancel', function() {
-                    App.Util.close(false, callback);
-                })
-                .on('click', '.vp_ok', function() {
-                    App.Util.close(true, callback);
-                });
-        };
+            bindEvent = function() {
+                $('#vp_wrap')
+                    .off('click')
+                    .on('click', '.vp_close, .vp_cancel', function() {
+                        App.Util.close(false, callback);
+                    })
+                    .on('click', '.vp_ok', function() {
+                        App.Util.close(true, callback);
+                    });
+            };
 
-        render = function() {
+        // render
+        (function() {
             App.Util.mask();
             App.Util.show('confirm', settings);
 
             bindEvent();
-        }();
+        }());
     };
 
     /**
      * @desc confirm pop
      * @param {string} str - display string
      * @param {function} callback - 回调函数，参数为返回值
-     * @param {object} options - 定制参数
      */
-    $.fn.confirm = function(str, callback, options) {
-        var $this, settings,
-            render, getDom, resizeEvent, close, bindEvent;
+    $.fn.confirm = function(str, callback) {
+        var $this = $(this),
 
-        $this = $(this);
-        settings = $.extend({
-            content: str
-        }, options);
+            resizeEvent = function($dom) {
+                $(window).on('resize, scroll', App.Util.debounce(function() {
+                    if ($dom.filter(':visible').length > 0) {
+                        showTip();
+                    }
+                }, 50));
+            },
 
-        resizeEvent = function($dom) {
-            $(window).on('resize', App.Util.debounce(function() {
-                if ($dom.filter(':visible').length > 0) {
-                    showTip();
+            getDom = function() {
+                var $dom = $('#vp_tip');
+
+                if ($dom.length <= 0) {
+                    $dom = $('<div>', {'class': 'vp_tip', 'id': 'vp_tip'})
+                        .append($('<p>', {'class': 'vp_tip_cnt'}))
+                        .append($('<a>', {'class': 'vp_min_btn vp_min_ok', 'href': 'javascript:;'}).html('确定'))
+                        .append($('<a>', {'class': 'vp_min_btn vp_min_cancel', 'href': 'javascript:;'}).html('取消'));
+                    
+                    resizeEvent($dom);
                 }
-            }, 100));
-        };
 
-        getDom = function() {
-            var $dom;
+                $dom.find('.vp_tip_cnt').html(str);
+                $dom.removeClass('vp_tip_min')
+                    .removeClass('vp_tip_max')
+                    .css('opacity', 0)
+                    .show();
 
-            $dom = $('#vp_tip');
+                return $dom;
+            },
 
-            if ($dom.length <= 0) {
-                $dom = $('<div>', {'class': 'vp_tip', 'id': 'vp_tip'});
-                $dom.append($('<p>', {'class': 'vp_tip_cnt'}))
-                    .append($('<a>', {'class': 'vp_min_btn vp_min_ok', 'href': 'javascript:;'}).html('确定'))
-                    .append($('<a>', {'class': 'vp_min_btn vp_min_cancel', 'href': 'javascript:;'}).html('取消'));
-                
-                resizeEvent($dom);
-            }
-            $dom.find('.vp_tip_cnt').html(str);
-            $dom.removeClass('vp_tip_min')
-                .removeClass('vp_tip_max')
-                .css('opacity', 0);
-            $dom.show();
+            bindEvent = function() {
+                $('#vp_tip')
+                    .off('click')
+                    .on('click', '.vp_min_ok', function() {
+                        close(true, callback);
+                    })
+                    .on('click', '.vp_min_cancel', function() {
+                        close(false, callback);
+                    });
+            },
 
-            return $dom;
-        };
+            /**
+             * @desc 关闭弹框
+             * @param {book} ret 返回值
+             * @param {function} callback 回调函数
+             */
+            close = function(ret, callback) {
+                $('#vp_tip').hide();
 
-        bindEvent = function() {
-            $('#vp_tip')
-                .off('click')
-                .on('click', '.vp_min_ok', function() {
-                    close(true, callback);
-                })
-                .on('click', '.vp_min_cancel', function() {
-                    close(false, callback);
+                if (callback !== undefined && typeof callback === 'function') {
+                    callback(ret);
+                }
+            },
+
+            showTip = function() {
+                var $dom = $('#vp_tip'),
+                    thisOffset = $this.offset(),
+                    domWidth = $dom.width();
+
+                if (domWidth < 120) {
+                    $dom.addClass('vp_tip_min');
+                }
+
+                if (domWidth > 240) {
+                    $dom.addClass('vp_tip_max');
+                }
+
+                $dom.css({
+                    top: thisOffset.top - $dom.outerHeight(),
+                    left: thisOffset.left - ($this.outerWidth() + $dom.outerWidth()) / 2,
+                    opacity: 1
                 });
-        };
+            },
 
-        /**
-         * @desc 关闭弹框
-         * @param {book} ret 返回值
-         * @param {function} callback 回调函数
-         */
-        close = function(ret, callback) {
-            $('#vp_tip').hide();
+            render = function() {
+                $('body').append(getDom());
 
-            if (callback !== undefined && typeof callback === 'function') {
-                callback(ret);
-            }
-        };
-
-        showTip = function() {
-            var $dom, thisOffset, domWidth;
-
-            $dom = $('#vp_tip');
-            thisOffset = $this.offset();
-            domWidth = $dom.width();
-
-            if (domWidth < 120) {
-                $dom.addClass('vp_tip_min');
-            }
-
-            if (domWidth > 240) {
-                $dom.addClass('vp_tip_max');
-            }
-
-            $dom.css({
-                top: thisOffset.top - $dom.outerHeight(),
-                left: thisOffset.left - ($this.outerWidth() + $dom.outerWidth()) / 2,
-                opacity: 1
-            });
-        };
-
-        render = function() {
-            var $dom;
-
-            $dom = getDom();
-            $('body').append($dom);
-
-            showTip();
-            bindEvent();
-        };
+                showTip();
+                bindEvent();
+            };
 
         return this.each(function() {
             render();
