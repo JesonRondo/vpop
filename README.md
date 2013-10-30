@@ -5,15 +5,15 @@ replace system alert, confirm and so on...
 
 ###useage
 
-#####alert
+#####$.alert
     $.alert('alert');
 
-#####confirm
+#####$.confirm
     $.confirm('confirm', function(ret) {
         // ret is return
     });
 
-#####fn.confirm
+#####$.fn.confirm
     $dom.confirm('fn.confirm', function(ret) {
         // ret is return
     });
