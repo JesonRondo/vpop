@@ -26,7 +26,9 @@
             var $mask = $('#vp_mk');
 
             if ($mask.length <= 0) {
-                $mask = $('<div>', {'class': 'vp_mk', 'id': 'vp_mk'}).css({
+                $mask = $([
+                    '<div class="vp_mk" id="vp_mk"></div>'
+                ].join('')).css({
                     'opacity': .6
                 });
 
@@ -43,10 +45,13 @@
                 $box, getDom, t;
 
             if ($vp_wrap.length <= 0) {
-                $vp_wrap = $('<div>', {'class': 'vp_wrap', 'id': 'vp_wrap'})
-                    .append($('<h5>', {'class': 'vp_t'}))
-                    .append($('<a>', {'class': 'vp_close', 'href': 'javascript:;'}).html('×'))
-                    .append($('<div>', {'class': 'v_pop_box'}));
+                $vp_wrap = $([
+                    '<div class="vp_wrap" id="vp_wrap">',
+                        '<h5 class="vp_t"></h5>',
+                        '<a href="javascript:;" class="vp_close">×</a>',
+                        '<div class="v_pop_box"></div>',
+                    '</div>'
+                ].join(''));
 
                 $('body').append($vp_wrap);
 
@@ -69,9 +74,12 @@
                     $box = $('.vp_alert');
 
                     if ($box.length <= 0) {
-                        $box = $('<div>', {'class': 'vp_alert vp_inner'})
-                            .append($('<p>', {'class': 'vp_cnt'}))
-                            .append($('<a>', {'class': 'vp_btn vp_ok', 'href': 'javascript:;'}).html('确定'));
+                        $box = $([
+                            '<div class="vp_alert vp_inner">',
+                                '<p class="vp_cnt"></p>',
+                                '<a href="javascript:;" class="vp_btn vp_ok">确定</a>',
+                            '</div>'
+                        ].join(''));
                     }
 
                     $box.show()
@@ -84,10 +92,13 @@
                     $box = $('.vp_confirm');
 
                     if ($box.length <= 0) {
-                        $box = $('<div>', {'class': 'vp_confirm vp_inner'})
-                            .append($('<p>', {'class': 'vp_cnt'}))
-                            .append($('<a>', {'class': 'vp_btn vp_ok', 'href': 'javascript:;'}).html('确定'))
-                            .append($('<a>', {'class': 'vp_btn vp_cancel', 'href': 'javascript:;'}).html('取消'));
+                        $box = $([
+                            '<div class="vp_confirm vp_inner">',
+                                '<p class="vp_cnt"></p>',
+                                '<a href="javascript:;" class="vp_btn vp_ok">确定</a>',
+                                '<a href="javascript:;" class="vp_btn vp_cancel">取消</a>',
+                            '</div>'
+                        ].join(''));
                     }
 
                     $box.show()
@@ -242,10 +253,13 @@
                 var $dom = $('#vp_tip');
 
                 if ($dom.length <= 0) {
-                    $dom = $('<div>', {'class': 'vp_tip', 'id': 'vp_tip'})
-                        .append($('<p>', {'class': 'vp_tip_cnt'}))
-                        .append($('<a>', {'class': 'vp_min_btn vp_min_ok', 'href': 'javascript:;'}).html('确定'))
-                        .append($('<a>', {'class': 'vp_min_btn vp_min_cancel', 'href': 'javascript:;'}).html('取消'));
+                    $dom = $([
+                        '<div class="vp_tip" id="vp_tip">',
+                            '<p class="vp_tip_cnt"></p>',
+                            '<a href="javascript:;" class="vp_min_btn vp_min_ok">确定</a>',
+                            '<a href="javascript:;" class="vp_min_btn vp_min_cancel">取消</a>',
+                        '</div>'
+                    ].join(''));
                     
                     resizeEvent($dom);
                 }
